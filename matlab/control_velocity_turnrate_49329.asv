@@ -1,0 +1,28 @@
+%% the function for computing the closed-loop controller -- velocity and turnrate 
+
+function  [velocity_1,turnrate_1] = ...
+    control_velocity_turnrate_49329(V_0,Omega_0,deltatheta,deltaX,deltaY,phi)
+
+    %% the current state
+    j_last = size(deltatheta,2);
+    X_current=[-1*(cos(phi)*deltaX(j_last) + sin(phi)*deltaX(j_last));
+               sin(phi)*deltaY(j_last) - cos(phi)*deltaY(j_last);
+               deltatheta(j_last)];
+
+       
+    % the gain matrix (e.g. from optimal control) -- please change this
+    % K of pole placement
+    %K = [-3.3103    1.5800    0.5385;
+    %      0.4585   -2.1185   -3.2397];
+    
+    % K of design method using LQR
+    K = [-3.2377    1.5108    0.3149
+        0.3149   -2.2662   -3.4088];
+    
+    % control value from state feedback
+    U = -K*X_current;
+        
+    %% get the velocity and turnrate values 
+    velocity_1 = U(1) + V_0*cos(deltatheta(j_last));
+    turnrate_1 = U(2) +Omega_0;
+end
