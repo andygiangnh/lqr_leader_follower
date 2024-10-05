@@ -15,5 +15,6 @@ function  [velocity_1,turnrate_1] = ...
         
     %% get the velocity and turnrate values 
     velocity_1 = U(1) + V_0*cos(deltatheta(j_last));
-    turnrate_1 = U(2) + Omega_0;
+    %turnrate_1 = U(2) + Omega_0;
+    turnrate_1 = Omega_0;
 end

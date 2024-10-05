@@ -9,8 +9,8 @@ close all
 closed_loop=1; % open-loop
 %closed_loop=1; % closed-loop
 
-time_period = 10; % simulation time period
-dt = 0.01;   % sample time
+time_period = 20; % simulation time period
+dt = 0.02;   % sample time
 total_steps = time_period/dt; % number of steps to simulate
 
 % velocity and angular velocity of the desired trajectory
@@ -35,7 +35,7 @@ C = eye(3);
 D = 0;
 
 Q = eye(3)*9;
-R = eye(2)*2;
+R = eye(2);
 
 [K_opt, P_opt, E_opt] = lqr(A,B,Q,R)
 
@@ -90,7 +90,7 @@ for j=1:total_steps
         
        % adjust the desired trajectory by changing the desired angular
        % velocity
-       Omega_0(j) = 1.5*sin(2*t(j));
+       Omega_0(j) = 0.15*sin(0.2*t(j)) - 0.3*cos(t(j));
         
         % get the control-- velocity and turnrate
         [velocity_1,turnrate_1] = ...
@@ -137,8 +137,13 @@ for j=1:total_steps
         
         
         % difference between actural and desired pose
-        %deltatheta(j+1) = wrap(abs(phi(j+1)) - abs(phi_d(j+1)));
-        deltatheta(j+1) = angle_difference(phi_d(j+1), phi(j+1));
+        if(phi(j+1) < 0 && phi_d(j+1) > 0)
+            deltatheta(j+1) = wrap(2*pi + phi(j+1) - phi_d(j+1));
+        elseif(phi_d(j+1) < 0 && phi(j+1) > 0)
+            deltatheta(j+1) = wrap(phi(j+1) - (2*pi + phi_d(j+1)));
+        else
+            deltatheta(j+1) = wrap(phi(j+1) - phi_d(j+1));
+        end
         deltaX(j+1) = x(j+1)-x_d(j+1);
         deltaY(j+1) = y(j+1)-y_d(j+1);
         
